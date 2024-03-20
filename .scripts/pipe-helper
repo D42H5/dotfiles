@@ -1,0 +1,144 @@
+#!/bin/bash
+
+############################################################################
+# HELP SECTION
+############################################################################
+name="pipe-helper"
+
+Help() {
+	# Display Helper
+	echo
+	echo "Wrapper script for pipewire. Can increase/decrease volume,"
+	echo "mute audio and mic, and return a status in JSON format"
+	echo
+	echo "Syntax: $name [ -h|s|a|m ]"
+	echo "Syntax: $name [ -i|d ] <value>"
+	echo
+	echo "Options:"
+	echo "-h	Display this helpful information"
+	echo "-s	Display the current volume as a decimal and a corresponding tooltip in JSON format"
+	echo "-a	Mute audio"
+	echo "-m	Mute microphone"
+	echo "-i	Increase volume by <value> amount"
+	echo "-d	Decrease volume by <value> amount"
+	echo
+	echo "NOTE: <value> should be a positive number. Can be either an integer or float"
+	echo
+}
+
+############################################################################
+# FUNCTIONS
+############################################################################
+
+getVolume() {
+	val=`wpctl get-volume @DEFAULT_AUDIO_SINK@ | sed 's/^Volume: //'`
+	percent=`bc <<< "$val*100" | sed 's/\.00//'`
+	echo $percent
+}
+
+determineTooltip() {
+	if [[ $1 -ge 75 ]]
+	then
+		echo "75%"
+	elif [[ $1 -ge 50 ]]
+	then
+		echo "50%"
+	elif [[ $1 -ge 25 ]]
+	then
+		echo "25%"
+	else
+		echo "0%"
+	fi
+}
+
+checkMuted() {
+	mute="`wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep 'MUTED'`"
+	if [ -z "$mute" ]
+	then
+		return 1
+	else
+		return 0
+	fi
+}
+
+outputNormalJSON() {
+	printf '{"percentage":%d}' $1
+}
+
+outputMutedJSON() {
+	printf '{"alt":"mute", "tooltip":"muted", "class":"muted"}'
+}
+
+getStatus() {
+	if $(checkMuted)
+	then
+		echo $(outputMutedJSON)
+	else
+		vol="$(getVolume)"
+		echo $(outputNormalJSON $vol)
+	fi
+}
+
+increaseVolume() {
+	wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ $1%+
+}
+
+decreaseVolume() {
+	wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ $1%-
+}
+
+muteAudio() {
+	wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+}
+
+muteMic() {
+	wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+}
+
+getAudioVolume() {
+	echo `wpctl get-volume @DEFAULT_AUDIO_SINK@`
+}
+
+############################################################################
+# MAIN CODE
+############################################################################
+
+# Display help information if no arguments passed
+[ $# -eq 0 ] && Help
+
+# Handle options
+while getopts ":hsgami:d:" arg; do
+	case $arg in
+		s)
+			echo $(getStatus)
+			exit
+			;;
+		g)
+			echo $(getAudioVolume)
+			exit
+			;;
+		i)
+			amount=${OPTARG}
+			echo $amount
+			$(increaseVolume $amount)
+			exit
+			;;
+		d)
+			amount=${OPTARG}
+			$(decreaseVolume $amount)
+			exit
+			;;
+		a)
+			$(muteAudio)
+			exit
+			;;
+		m)
+			$(muteMic)
+			exit
+			;;
+		h | *)
+			Help
+			exit
+			;;
+	esac
+done
