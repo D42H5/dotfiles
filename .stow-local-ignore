@@ -1,0 +1,7 @@
+# Ignore top-level git stuff
+\.git
+\.gitignore
+\.gitmodules
+
+# Ignore READMEs
+^/README.*

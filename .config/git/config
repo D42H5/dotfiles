@@ -1,0 +1,21 @@
+[user]
+	email = hoggjduncan@gmail.com
+	name = Duncan Hogg
+[core]
+	editor = nvim
+[pull]
+	rebase = false
+[push]
+	autoSetupRemote = true
+[init]
+	defaultBranch = main
+[alias]
+	co = checkout
+	c = commit
+	st = status
+	br = branch
+	p = push
+	st = stash
+	sta = stash apply
+	staq = stash apply -q
+	s = status
