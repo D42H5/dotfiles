@@ -1,0 +1,297 @@
+* {
+	border: none;
+	border-radius: 10px;
+	font-family: "SauceCodePro Nerd Font" ;
+	font-size: 15px;
+	min-height: 10px;
+}
+
+window#waybar {
+	background: transparent;
+}
+
+window#waybar.hidden {
+	opacity: 0.2;
+}
+
+#tags {
+	margin-top: 6px;
+	margin-left: 12px;
+	font-size: 4px;
+	margin-bottom: 0px;
+	border-radius: 10px;
+	min-width: 0;
+	background: #0e1218;
+	transition: none;
+}
+
+#tags button {
+	min-width: 50px;
+	transition: none;
+	color: #dfd2c4;
+	background: transparent;
+	font-size: 16px;
+	border-radius: 2px;
+}
+
+#tags button.occupied {
+	transition: none;
+	color: #c5663d;
+	background: transparent;
+	font-size: 4px;
+}
+
+#tags button.focused {
+	color: #cc8a5e;
+	border-top: 2px solid #cc8a5e;
+	border-bottom: 2px solid #cc8a5e;
+}
+
+#tags button:hover {
+	transition: none;
+	box-shadow: inherit;
+	text-shadow: inherit;
+	color: #ffffee;
+	border-color: #ffffee;
+	color: #ffffee;
+}
+
+#tags button.focused:hover {
+	color: #ffffee;
+}
+
+#tags button.urgent {
+	border-top: 2px solid #fb4934;
+	border-bottom: 2px solid #fb4934;
+}
+
+#workspaces button {
+	padding: 0 0 0 0;
+	margin: 3px 2px;
+	background-color: #0e1218;
+	color: #8e9ebe;
+	min-width: 36px;
+}
+
+#workspaces button.active {
+	background-color: #8e9ebe;
+	color: #0e1218;
+}
+
+#workspaces button.focused {
+	background-color: #cc8a5e;
+	color: #323232;
+}
+
+#workspaces button.urgent {
+	background-color: #fb4934;
+}
+
+.modules-left > widget:first-child > #workspaces {
+	margin-left: 0;
+}
+
+.modules-right > widget:first-child > #workspaces {
+	margin-right: 0;
+}
+
+#network {
+	margin: 3px 2px;
+	padding-left: 6px;
+	padding-right: 12px;
+	border-radius: 10px;
+	transition: none;
+	color: #E0DEF4;
+	background: #393552;
+}
+
+#pulseaudio {
+	margin: 3px 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+	border-radius: 10px;
+	transition: none;
+	color: #E0DEF4;
+	background: #393552;
+}
+
+#battery {
+	margin: 3px 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+	border-radius: 10px;
+	transition: none;
+	color: #E0DEF4;
+	background: #393552;
+}
+
+/*#battery.charging, #battery.plugged {
+	color: #faf3f0;
+	background-color: #57a17a;
+	}
+
+#battery.critical:not(.charging) {
+	color: #faf3f0;
+	background-color: #57a17a;
+	animation-name: blink;
+	animation-duration: 0.5s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+}
+
+@keyframes blink {
+	to {
+		color: #9F9C9D;
+		background-color: #BF616A;
+	}
+}*/
+
+#backlight {
+	margin-top: 6px;
+	margin-left: 8px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-bottom: 0px;
+	border-radius: 10px;
+	transition: none;
+	color: #faf3f0;
+	background: #D3A46E;
+}
+
+#clock {
+	margin: 3px 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+	border-radius: 10px;
+	transition: none;
+	/*background: #ecb9f0;*/
+	color: #E0DEF4;
+	background: #393552;
+}
+
+#memory {
+	margin-top: 6px;
+	margin-left: 8px;
+	padding-left: 10px;
+	margin-bottom: 0px;
+	padding-right: 10px;
+	border-radius: 10px;
+	transition: none;
+	color: #faf3f0;
+	background: #c5663d;
+}
+
+#cpu {
+	margin-top: 6px;
+	margin-left: 8px;
+	padding-left: 10px;
+	margin-bottom: 0px;
+	padding-right: 10px;
+	border-radius: 10px;
+	transition: none;
+	color: #faf3f0;
+	background: #8E5339;
+}
+
+#tray {
+	margin: 3px 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+	border-radius: 10px;
+	transition: none;
+	color: #faf3f0;
+	background: #7A7E86;
+	color: #E0DEF4;
+	background: #393552;
+}
+
+#custom-launcher {
+	font-size: 24px;
+	margin: 3px 2px;
+	padding-left: 10px;
+	padding-right: 5px;
+	border-radius: 10px;
+	transition: none;
+	color: #C4A7E7;
+	background: #393552;
+}
+
+#custom-pipewire-vol {
+	margin: 3px 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+	border-radius: 10px;
+	transition: none;
+	color: #E0DEF4;
+	background: #393552;
+}
+
+#custom-pipewire-mic {
+	margin: 3px 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+	border-radius: 10px;
+	transition: none;
+	color: #E0DEF4;
+	background: #393552;
+}
+
+
+#custom-power {
+	font-size: 15px;
+	margin: 3px 2px;
+	padding-left: 11px;
+	padding-right: 14px;
+	border-radius: 10px;
+	transition: none;
+	color: #EA9A97;
+	/*color: #E0DEF4;*/
+	background: #393552;
+}
+
+#custom-wallpaper {
+	margin-top: 6px;
+	margin-left: 8px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-bottom: 0px;
+	border-radius: 10px;
+	transition: none;
+	color: #faf3f0;
+	background: #C9CBFF;
+}
+
+#custom-updates {
+	margin-top: 6px;
+	margin-left: 8px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-bottom: 0px;
+	border-radius: 10px;
+	transition: none;
+	color: #faf3f0;
+	background: #E8A2AF;
+}
+
+#custom-media {
+	margin-top: 6px;
+	margin-left: 8px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-bottom: 0px;
+	border-radius: 10px;
+	transition: none;
+	color: #faf3f0;
+	background: #7A7E86;
+}
+
+#custom-mpc {
+	margin: 3px 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+	border-radius: 10px;
+	transition: none;
+	color: #faf3f0;
+	background: #c895cc;
+}

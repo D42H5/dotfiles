@@ -1,39 +1,9 @@
 #!/bin/bash
 
-############################################################################
-# HELP SECTION
-############################################################################
-name="pipe-helper"
-
-Help() {
-	# Display Helper
-	echo
-	echo "Wrapper script for pipewire. Can increase/decrease volume,"
-	echo "mute audio and mic, and return a status in JSON format"
-	echo
-	echo "Syntax: $name [ -h|s|a|m ]"
-	echo "Syntax: $name [ -i|d ] <value>"
-	echo
-	echo "Options:"
-	echo "-h	Display this helpful information"
-	echo "-s	Display the current volume as a decimal and a corresponding tooltip in JSON format"
-	echo "-a	Mute audio"
-	echo "-m	Mute microphone"
-	echo "-i	Increase volume by <value> amount"
-	echo "-d	Decrease volume by <value> amount"
-	echo
-	echo "NOTE: <value> should be a positive number. Can be either an integer or float"
-	echo
-}
-
-############################################################################
-# FUNCTIONS
-############################################################################
-
 getVolume() {
-	val=`wpctl get-volume @DEFAULT_AUDIO_SINK@ | sed 's/^Volume: //'`
-	percent=`bc <<< "$val*100" | sed 's/\.00//'`
-	echo $percent
+	val=`pactl get-$2-volume @DEFAULT_$1@ | awk '{ print $5 }' | sed 's/%//' | tr -d '[:space:]'`
+	#percent=`bc <<< "$val*100" | sed 's/\.00//'`
+	echo $val
 }
 
 determineTooltip() {
@@ -52,8 +22,14 @@ determineTooltip() {
 }
 
 checkMuted() {
-	mute="`wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep 'MUTED'`"
-	if [ -z "$mute" ]
+	mute="`pactl get-$2-mute @DEFAULT_$1@ | grep no`" 
+	# Probably some bash-ism I'm missing here, but the 
+	# logic works as meant to... even though it's checking 
+	# against a non-null string and passing as true
+	# when it should be passing as false...
+	# TL:DR - grep no == yes
+
+	if [ -n "$mute" ]
 	then
 		return 1
 	else
@@ -70,21 +46,31 @@ outputMutedJSON() {
 }
 
 getStatus() {
-	if $(checkMuted)
+	if $(checkMuted $1 $2)
 	then
 		echo $(outputMutedJSON)
 	else
-		vol="$(getVolume)"
+		vol="$(getVolume $1 $2)"
 		echo $(outputNormalJSON $vol)
 	fi
 }
 
 increaseVolume() {
-	wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ $1%+
+	cur_vol="$(getVolume $1 $2)"
+	new_vol=`expr "$cur_vol" + "$3"`
+	if [ "$new_vol" -gt "$4" ]; then
+		new_vol=`expr "$4"`
+	fi
+	pactl set-$2-volume @DEFAULT_$1@ $new_vol%
 }
 
 decreaseVolume() {
-	wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ $1%-
+	cur_vol="$(getVolume $1 $2)"
+	new_vol=`expr "$cur_vol" - "$3"`
+	if [ "$new_vol" -lt 0 ]; then
+		new_vol=0
+	fi
+	pactl set-$2-volume @DEFAULT_$1@ $new_vol%
 }
 
 muteAudio() {
@@ -103,42 +89,72 @@ getAudioVolume() {
 # MAIN CODE
 ############################################################################
 
-# Display help information if no arguments passed
-[ $# -eq 0 ] && Help
+unset -v REF
+unset -v vol_change
+unset -v vol_limit
+unset -v do_get_status
+unset -v do_mute_toggle
+unset -v do_increase_vol
+unset -v do_decrease_vol
 
 # Handle options
-while getopts ":hsgami:d:" arg; do
+while getopts ":sr:i:d:l:m" arg; do
 	case $arg in
-		s)
-			echo $(getStatus)
-			exit
+		r)
+			REF="${OPTARG}"
 			;;
-		g)
-			echo $(getAudioVolume)
-			exit
+		s)
+			do_get_status=1
 			;;
 		i)
-			amount=${OPTARG}
-			echo $amount
-			$(increaseVolume $amount)
-			exit
+			vol_change=${OPTARG}
+			do_increase_vol=1
 			;;
 		d)
-			amount=${OPTARG}
-			$(decreaseVolume $amount)
-			exit
+			vol_change=${OPTARG}
+			do_decrease_vol=1
 			;;
-		a)
-			$(muteAudio)
-			exit
+		l)
+			vol_limit=${OPTARG}
 			;;
 		m)
-			$(muteMic)
-			exit
+			do_mute_toggle=1
 			;;
-		h | *)
-			Help
+		*)
+			echo "Unknown flag $arg"
 			exit
 			;;
 	esac
 done
+
+# Check to make sure a ref was given
+: ${REF:?Missing audio reference, please specify with -r}
+
+# Convert REF to lowercase for utility in a few places
+ref=`echo $REF | tr '[:upper:]' '[:lower:]'`
+
+if [ -n "$do_get_status" ]; then
+	# Get the status
+	getStatus $REF $ref
+
+elif [ -n "$do_increase_vol" ]; then
+	# Increase the volme
+	if [ -n "$vol_limit" ]; then
+		increaseVolume $REF $ref $vol_change $vol_limit
+	else
+		increaseVolume $REF $ref $vol_change 100
+	fi
+
+elif [ -n "$do_decrease_vol" ]; then
+	# Decerase the volume
+	decreaseVolume $REF $ref $vol_change
+
+elif [ -n "$do_mute_toggle" ]; then
+	# Toggle mute
+	pactl set-$ref-mute @DEFAULT_$REF@ toggle
+
+else
+	echo "No valid functional purpose specified."
+	echo "Please use one of the following options: s, i, d, or m"
+	exit
+fi

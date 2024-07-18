@@ -12,10 +12,9 @@
 [alias]
 	co = checkout
 	c = commit
-	st = status
 	br = branch
 	p = push
+	s = status
 	st = stash
 	sta = stash apply
 	staq = stash apply -q
-	s = status
