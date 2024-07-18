@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm /home/duncan/.local/state/nvim/swap/*
+rm $HOME/.local/state/nvim/swap/*

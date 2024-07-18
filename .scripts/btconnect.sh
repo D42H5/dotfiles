@@ -1,5 +1,5 @@
 #!/bin/bash
-source /home/duncan/.scripts/bt-helper.sh
+source $HOME/.scripts/bt-helper.sh
 
 DEV_ENTRY="$(getEntry $1)"
 

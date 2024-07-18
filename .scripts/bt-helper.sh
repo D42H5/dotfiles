@@ -1,5 +1,5 @@
 #!/bin/bash
-DATA_FILE="/home/duncan/.scripts/data_files/bt-devices"
+DATA_FILE="$HOME/.scripts/data_files/bt-devices"
 
 getEntry () {
 	if [[ $# -ne 1 ]]
