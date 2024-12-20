@@ -26,20 +26,23 @@ export EDITOR=/usr/bin/nvim
 #Make it so git doesn't flag untracked files
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 
+# Convenient variable
+ZSH_SOURCES_DIR=$HOME/.config/zsh_sources
+
 # Source git and vcs_info
-source $HOME/.config/zsh_sources/git.zsh
-source $HOME/.config/zsh_sources/vcs_info.zsh;
+source $ZSH_SOURCES_DIR/git.zsh
+source $ZSH_SOURCES_DIR/vcs_info.zsh;
 
 # Source virtualenv prompt support stuff
-source $HOME/.config/zsh_sources/virtualenv.zsh;
+source $ZSH_SOURCES_DIR/virtualenv.zsh;
 
 # Source useful command line tools
-source $HOME/.config/zsh_sources/history.zsh;
+source $ZSH_SOURCES_DIR/history.zsh;
 
-# source $HOME/.config/zsh_sources/completion.zsh;
+# source $ZSH_SOURCES_DIR/completion.zsh;
 
 # Possibly yoink stuff from
-# source $HOME/.config/zsh_sources/key-bindings.zsh;
+# source $ZSH_SOURCES_DIR/key-bindings.zsh;
 
 # Other nice exports to have
 # export TERM=xterm-kitty
@@ -52,7 +55,7 @@ LD_LIBRARY_PATH=/usr/local/lib
 export LD_LIBRARY_PATH
 
 # Aliases
-source $HOME/.config/zsh_sources/aliases.zsh
+source $ZSH_SOURCES_DIR/aliases.zsh
 
 # Start ssh-agent for retaining keys
 # [ -z "$SSH_AUTH_SOCK" ] && eval "$(ssh-agent -s)"
@@ -63,11 +66,11 @@ source $HOME/.config/zsh_sources/aliases.zsh
 
 # Sourcing theme and theme relevant tool, important to source after 
 # virtualenv due to dependent function
-source $HOME/.config/zsh_sources/theme-and-appearance.zsh;
-source $HOME/.config/zsh_sources/warmblood.zsh-theme
+source $ZSH_SOURCES_DIR/theme-and-appearance.zsh;
+source $ZSH_SOURCES_DIR/warmblood.zsh-theme
 
 # Source my user defined functions
-FUNC_PATH=/usr/local/share/zsh_sources/functions.zsh
+FUNC_PATH=$ZSH_SOURCES_DIR/functions.zsh
 if [[ -f $FUNC_PATH ]]; then
 	source $FUNC_PATH
 fi
@@ -76,7 +79,7 @@ fi
 #source '/etc/profile.d/debuginfod.sh'
 
 # Always source zsh-syntax-completion after plugin sources
-source $HOME/.config/zsh_sources/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $ZSH_SOURCES_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # zoxide stuff
 export _ZO_DATA_DIR=$HOME/.cache/zoxide
