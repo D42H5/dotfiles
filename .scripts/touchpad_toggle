@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Get current state (0 or 1)
+state=$(synclient -l | grep "TouchpadOff" | awk '{print $3}')
+
+# Negate state
+state=$((state ^ 1))
+
+# Update TouchpadOff with new state
+synclient TouchpadOff=$state
